@@ -1,5 +1,6 @@
 import os
-from flask import (Flask, flash, render_template,
+from flask import (
+    Flask, flash, render_template,
     redirect, request, session, url_for)
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
@@ -24,11 +25,13 @@ def get_tasks():
     return render_template("tasks.html", tasks=tasks)
 
 
-@app.route("/register", methods=["GET","POST"])
+@app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
+        # check if username already exists in db
         existing_user = mongo.db.users.find_one(
             {"username": request.form.get("username").lower()})
+
         if existing_user:
             flash("Username already exists")
             return redirect(url_for("register"))
@@ -39,8 +42,9 @@ def register():
         }
         mongo.db.users.insert_one(register)
 
-        session["user"] = request.form .get("username").lower()
-        flash("Registration Succesful")
+        # put the new user into 'session' cookie
+        session["user"] = request.form.get("username").lower()
+        flash("Registration Successful!")
     return render_template("register.html")
 
 
